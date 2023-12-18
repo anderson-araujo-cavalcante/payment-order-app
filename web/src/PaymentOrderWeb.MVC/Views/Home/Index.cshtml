@@ -1,0 +1,21 @@
+﻿@model PaymentOrderWeb.MVC.Models.MultipleFileViewModel;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<form asp-action="UploadFiles" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Files" class="control-label"></label>
+        <input type="file" asp-for="Files" class="form-control" multiple />
+        <span asp-validation-for="Files" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
