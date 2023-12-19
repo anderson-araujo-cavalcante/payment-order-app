@@ -2,6 +2,7 @@ using AutoMapper;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
+using PaymentOrderWeb.Domain.Entities;
 using PaymentOrderWeb.MVC.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -36,47 +37,38 @@ namespace PaymentOrderWeb.MVC.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpPost]
-        public async Task<ActionResult> UploadFiles(MultipleFileViewModel multipleFile)
-        {
-            var list = new List<SiteDto>();
+        //[HttpPost]
+        //public async Task<ActionResult> UploadFiles(MultipleFileViewModel multipleFile)
+        //{
+        //    var list = new List<EmployeeData>();
 
-            foreach (var file in multipleFile.Files)
-            {
-                using var memoryStream = new MemoryStream(new byte[file.Length]);
-                await file.CopyToAsync(memoryStream);
-                memoryStream.Position = 0;
+        //    foreach (var file in multipleFile.Files)
+        //    {
+        //        using var memoryStream = new MemoryStream(new byte[file.Length]);
+        //        await file.CopyToAsync(memoryStream);
+        //        memoryStream.Position = 0;
 
-                var csvConfig = new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)
-                {
-                    HeaderValidated = null,
-                    MissingFieldFound = null,
-                    HasHeaderRecord = false,
-                    Delimiter = ";",
-                    Encoding = Encoding.UTF8
-                };
+        //        var csvConfig = new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)
+        //        {
+        //            HeaderValidated = null,
+        //            MissingFieldFound = null,
+        //            HasHeaderRecord = false,
+        //            Delimiter = ";",
+        //            Encoding = Encoding.UTF8
+        //        };
 
-                using (var reader = new StreamReader(memoryStream, Encoding.UTF8))
-                using (var csvReader = new CsvReader(reader, csvConfig))
-                {
-                     csvReader.Context.RegisterClassMap<SiteDtoMap>();
+        //        using (var reader = new StreamReader(memoryStream, Encoding.UTF8))
+        //        using (var csvReader = new CsvReader(reader, csvConfig))
+        //        {
+        //             csvReader.Context.RegisterClassMap<EmployeeDataMap>();
 
-                    csvReader.Read();
-                    var records = csvReader.GetRecords<SiteDto>();
-                    list.AddRange(records);
-                }
-            }           
+        //            csvReader.Read();
+        //            var records = csvReader.GetRecords<EmployeeData>();
+        //            list.AddRange(records);
+        //        }
+        //    }           
 
-            return View("Index");
-        }
-    }
-
-    public class MyCsv
-    {
-        public int A { get; set; }
-        public int B { get; set; }
-        public int C { get; set; }
-        public int D { get; set; }
-        public int Z { get; set; }
+        //    return View("Index");
+        //}
     }
 }

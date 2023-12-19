@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PaymentOrderWeb.Domain\PaymentOrderWeb.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

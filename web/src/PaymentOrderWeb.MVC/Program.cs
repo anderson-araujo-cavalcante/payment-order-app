@@ -1,7 +1,15 @@
+using PaymentOrderWeb.MVC.Configurations;
+using PaymentOrderWeb.Application.Configurations;
+using PaymentOrderWeb.Domain.Configurations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddWebModule();
+builder.Services.AddAppModule();
+builder.Services.AddDomainModule();
 
 var app = builder.Build();
 

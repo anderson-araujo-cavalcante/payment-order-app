@@ -1,0 +1,18 @@
+﻿@model PaymentOrderWeb.MVC.Models.MultipleFileViewModel;
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<hr />
+<form asp-action="UploadFiles" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Files" class="control-label"></label>
+        <input type="file" asp-for="Files" class="form-control" multiple />
+        <span asp-validation-for="Files" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Processar" class="btn btn-primary" />
+    </div>
+</form>

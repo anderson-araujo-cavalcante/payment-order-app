@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PaymentOrderWeb.Domain.Entities;
 
-namespace PaymentOrderWeb.Domain.Interfaces
+namespace PaymentOrderWeb.Domain.Interfaces.Services
 {
     public interface IPaymentOrderService
     {
+        Task Process(IEnumerable<Employee> employees);
     }
 }
