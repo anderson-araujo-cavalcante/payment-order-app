@@ -1,9 +1,9 @@
-﻿using PaymentOrderWeb.Domain.Entities;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace PaymentOrderWeb.Application.Interfaces
 {
     public interface IPaymentOrderAppService
     {
-        Task Process(IEnumerable<EmployeeData> employees);
+        Task Process(IEnumerable<IFormFile> files);
     }
 }

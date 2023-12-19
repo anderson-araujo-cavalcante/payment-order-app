@@ -1,7 +1,14 @@
-﻿using PaymentOrderWeb.Application.Interfaces;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Http;
+using PaymentOrderWeb.Application.CSVMap;
+using PaymentOrderWeb.Application.Interfaces;
 using PaymentOrderWeb.Domain.Entities;
 using PaymentOrderWeb.Domain.Interfaces.Services;
-using System.Threading.Tasks.Dataflow;
+using PaymentOrderWeb.Infrasctructure.Extensions;
+using System.Collections.Concurrent;
+using System.Globalization;
+using System.Text;
 
 namespace PaymentOrderWeb.Application.Concrets
 {
@@ -13,103 +20,61 @@ namespace PaymentOrderWeb.Application.Concrets
         {
             _paymentOrderService = paymentOrderService ?? throw new ArgumentNullException(nameof(paymentOrderService));
         }
-        public async Task Process(IEnumerable<EmployeeData> employees)
+
+        public async Task Process(IEnumerable<IFormFile> files)
         {
-            var fileName = "";
-            var groupByName = employees.GroupBy(x => new { x.Name });
+            if (files is null) throw new ArgumentNullException(nameof(files));
 
+            var list = new Dictionary<string, IEnumerable<EmployeeData>>();
 
-            await groupByName.AsyncParallelForEach(async entry =>
+            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-
-                await Validate(entry);
-                //validar
-                //processar
-
-            }, 20, TaskScheduler.FromCurrentSynchronizationContext());
-
-
-            ParallelOptions parallelOptions = new()
-            {
-                MaxDegreeOfParallelism = 100
+                HeaderValidated = null,
+                MissingFieldFound = null,
+                HasHeaderRecord = false,
+                Delimiter = ";",
+                Encoding = Encoding.UTF8
             };
 
-            await employees.AsyncParallelForEach(async entry =>
+            if (SynchronizationContext.Current == null)
+                SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+            var exceptions = new ConcurrentQueue<Exception>();
+
+            await files.AsyncParallelForEach(async file =>
             {
-                Console.WriteLine($"Processing entry '{entry.Code}'");
-                await teste();
-                //validar
-                //processar
+                using var memoryStream = new MemoryStream(new byte[file.Length]);
+                await file.CopyToAsync(memoryStream);
+                memoryStream.Position = 0;
+
+                using var reader = new StreamReader(memoryStream, Encoding.UTF8);
+                using var csvReader = new CsvReader(reader, csvConfig);
+                csvReader.Context.RegisterClassMap<EmployeeDataMap>();
+
+                csvReader.Read();
+                try
+                {
+                    var records = csvReader.GetRecords<EmployeeData>();
+
+                    if (list.TryGetValue(file.Name, out var value))
+                    {
+                        list[file.Name] = value.Concat(records.ToList());
+                    }
+                    else
+                    {
+                        list.Add(file.FileName, records.ToList());
+                    }
+                }
+                catch (Exception ex) //custom
+                {
+                    exceptions.Enqueue(new Exception($"Planila {file.FileName} incosistente."));
+                }
 
             }, 20, TaskScheduler.FromCurrentSynchronizationContext());
 
-
-
-
-
-
-            //_paymentOrderService.Process(employees);
-        }
-
-        private async Task Validate(IEnumerable<EmployeeData> employees)
-        {
-            await employees.AsyncParallelForEach(async entry =>
+            if (!exceptions.IsEmpty)
             {
-                Console.WriteLine($"Processing entry '{entry.Code}'");
-                await teste();
-                //validar
-                //processar
-
-            }, 20, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        private async Task teste()
-        {
-
+                throw new AggregateException(exceptions);
+            }
         }
     }
-
-    public static class TesteParallel
-    {
-        //public static async Task AsyncParallelForEach<T>(this IAsyncEnumerable<T> source,
-        //                                                                                Func<T, Task> body,
-        //                                                                                int maxDegreeOfParallelism = DataflowBlockOptions.Unbounded,
-        //                                                                                TaskScheduler scheduler = null)
-        //{
-        //    var options = new ExecutionDataflowBlockOptions
-        //    {
-        //        MaxDegreeOfParallelism = maxDegreeOfParallelism
-        //    };
-
-        //    if (scheduler != null)
-        //        options.TaskScheduler = scheduler;
-
-        //    var block = new ActionBlock<T>(body, options);
-
-        //    await foreach (var item in source)
-        //        block.Post(item);
-
-        //    block.Complete();
-        //    await block.Completion;
-        //}
-
-        public static Task AsyncParallelForEach<T>(this IEnumerable<T> source, Func<T, Task> body, int maxDegreeOfParallelism = DataflowBlockOptions.Unbounded, TaskScheduler scheduler = null)
-        {
-            var options = new ExecutionDataflowBlockOptions
-            {
-                MaxDegreeOfParallelism = maxDegreeOfParallelism
-            };
-            if (scheduler != null)
-                options.TaskScheduler = scheduler;
-
-            var block = new ActionBlock<T>(body, options);
-
-            foreach (var item in source)
-                block.Post(item);
-
-            block.Complete();
-            return block.Completion;
-        }
-    }
-
 }
