@@ -18,7 +18,7 @@ namespace PaymentOrderWeb.MVC.Controllers
         {
             if (multipleFile is null) throw new ArgumentNullException(nameof(multipleFile));
 
-            await _paymentOrderAppService.Process(multipleFile.Files);
+            await _paymentOrderAppService.ProcessAsync(multipleFile.Files);
 
             return View("Index");
         }

@@ -4,6 +4,6 @@ namespace PaymentOrderWeb.Application.Interfaces
 {
     public interface IPaymentOrderAppService
     {
-        Task Process(IEnumerable<IFormFile> files);
+        Task ProcessAsync(IEnumerable<IFormFile> files);
     }
 }

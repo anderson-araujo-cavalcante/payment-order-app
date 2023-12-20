@@ -21,7 +21,7 @@ namespace PaymentOrderWeb.Application.Concrets
             _paymentOrderService = paymentOrderService ?? throw new ArgumentNullException(nameof(paymentOrderService));
         }
 
-        public async Task Process(IEnumerable<IFormFile> files)
+        public async Task ProcessAsync(IEnumerable<IFormFile> files)
         {
             if (files is null) throw new ArgumentNullException(nameof(files));
 
@@ -55,9 +55,9 @@ namespace PaymentOrderWeb.Application.Concrets
                 {
                     var records = csvReader.GetRecords<EmployeeData>();
 
-                    if (list.TryGetValue(file.Name, out var value))
+                    if (list.TryGetValue(file.FileName, out var value))
                     {
-                        list[file.Name] = value.Concat(records.ToList());
+                        list[file.FileName] = value.Concat(records.ToList());
                     }
                     else
                     {
@@ -75,6 +75,8 @@ namespace PaymentOrderWeb.Application.Concrets
             {
                 throw new AggregateException(exceptions);
             }
+
+            _paymentOrderService.Process1Async(list);
         }
     }
 }
