@@ -11,7 +11,7 @@ namespace PaymentOrderWeb.Domain.Entities
         public string ReferenceMonth { get; set; }
 
         [JsonPropertyName("AnoVigencia")]
-        public string ReferenceYear { get; set; }
+        public int ReferenceYear { get; set; }
 
         [JsonPropertyName("TotalPagar")]
         public double TotalToPay { get; set; }

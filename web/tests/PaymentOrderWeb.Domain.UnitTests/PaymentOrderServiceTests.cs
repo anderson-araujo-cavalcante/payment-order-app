@@ -69,6 +69,22 @@ namespace PaymentOrderWeb.Domain.UnitTests
         }
 
         [Fact]
+        public async Task MonthFileNameShouldEqualToPeriod()
+        {
+            /// Arrange
+            var fileName = "test-maio-2023.csv";
+            var data = CreateEmployeeData(fileName: fileName, monthReference: 4);
+
+            /// Act
+            var exception = await Assert.ThrowsAsync<AggregateException>(async () => await _service.ProcessAsync(data));
+
+            /// Assert
+            exception.Should().NotBeNull();
+            exception.InnerException.Should().NotBeNull();
+            exception.InnerException.Message.Should().BeEquivalentTo($"Planila {fileName} incosistente.");
+        }
+
+        [Fact]
         public async Task HoursExtrasWorkedShouldBePaid()
         {
             /// Arrange
@@ -92,13 +108,15 @@ namespace PaymentOrderWeb.Domain.UnitTests
             int outputTime = 18, 
             int dayDiscount = 0,
             double hourlyRate = 110.97,
-            bool onlyBusinessDays = false)
+            bool onlyBusinessDays = false,
+            string fileName = "test-abril-2023.csv",
+            int monthReference = 4)
         {
             var employees = new Dictionary<string, IEnumerable<EmployeeData>>();
             var data = Enumerable.Empty<EmployeeData>();
             for (var i = 1; i <= 30 - dayDiscount; i++)
             {
-                var date = new DateOnly(2023, 04, i);
+                var date = new DateOnly(2023, monthReference, i);
                 if (onlyBusinessDays && !date.IsBusinessDay()) continue;
 
                 data = data.Append(new EmployeeData
@@ -112,7 +130,7 @@ namespace PaymentOrderWeb.Domain.UnitTests
                     LunchTime = "12:00 - 13:00"
                 });
             }
-            employees.Add("test-abril-2023.csv", data);
+            employees.Add(fileName, data);
 
             return employees;
         }
