@@ -42,7 +42,11 @@
 
 ![image](https://github.com/anderson-araujo-cavalcante/payment-order-app/assets/133878123/8f82d086-5d36-47d3-950e-30f9453a7a21)
 
-4. Selecionar os arquivos a serem processados, os mesmos devem respeitar as seguintes regras:
+4. Selecionar os arquivos a serem processados: 
+
+![image](https://github.com/anderson-araujo-cavalcante/payment-order-app/assets/133878123/39f7bcea-194b-4266-9959-5538829a1454)
+
+Estes arquivos devem respeitar as seguintes regras:
 ```
 Nome do arquivo deve conter: Nome do Departamento, Mês de vigência, Ano de vigência. 
 Exemplo: ‘Departamento de Operações Especiais-Abril-2022.csv’
@@ -63,79 +67,42 @@ O arquivo deve conter as seguintes colunas/tipo:
 
 5. Ao clicar em **Processar** será feito o upload dos arquivos para o servidor web;
 6. Serão realizado dois processos: ```validação de dados inconsistentes na planilha``` e ```processamento dos dados``` 
+Caso contenha algo inconsistente em alguma planilha seja retornado um aviso e não será seguirá com o processamento:
 
-• Dias trabalhados. O trabalho segue de segunda a sexta e é esperado que o funcionário trabalhe 8 
+![image](https://github.com/anderson-araujo-cavalcante/payment-order-app/assets/133878123/73f7afe2-382b-4da5-9174-d8ee70f5bd9b)
+
+No processamento será considerado as seguintes regras:
+
+- Dias trabalhados. O trabalho segue de segunda a sexta e é esperado que o funcionário trabalhe 8 
 horas por dia mais 1 hora de almoço. 
-• Valor da hora da pessoa. 
-• Os dias não trabalhados são descontados da pessoa. 
-• Horas não trabalhadas são descontadas da pessoa. 
-• Horas extras são pagas. 
-• Dias extras são pagos. 
-Após a análise de Joyce é gerado um arquivo contendo as seguintes informações: 
-• O valor pago por departamento. 
-• Os dados da pessoa. 
-• Valor pago a cada pessoa. 
-• Valor descontado de cada pessoa. 
-• Quantidade de horas extras ou horas faltantes. Quando as horas são faltantes Joyce coloca o valor 
+- Valor da hora da pessoa. 
+- Os dias não trabalhados são descontados da pessoa. 
+- Horas não trabalhadas são descontadas da pessoa. 
+- Horas extras são pagas. 
+- Dias extras são pagos.
+
+Após a processamento será gerado um arquivo contendo as seguintes informações: 
+- O valor pago por departamento. 
+- Os dados da pessoa. 
+- Valor pago a cada pessoa. 
+- Valor descontado de cada pessoa. 
+- Quantidade de horas extras ou horas faltantes. Quando as horas são faltantes Joyce coloca o valor 
 negativo. 
-• Quantidade de dias extras ou faltantes. Quando os dias são faltantes Joyce coloca o valor 
+- Quantidade de dias extras ou faltantes. Quando os dias são faltantes Joyce coloca o valor 
 negativo. 
 
-6. 
+6. No final do processamento será disponibilizado um arquivo json:
 
+![image](https://github.com/anderson-araujo-cavalcante/payment-order-app/assets/133878123/b22f18e1-9380-4742-af8a-857b06a8efac)
 
+![image](https://github.com/anderson-araujo-cavalcante/payment-order-app/assets/133878123/ba05fc31-bc4c-4fbb-80f1-6183329b266b)
 
-
-## Tarefas Realizadas
-
- :white_check_mark: finalizado
- 
- :construction: em andamento
-
-- Crie as duas Tabelas abaixo no Banco de Dados: :white_check_mark:
-- Crie uma Arquitetura em camadas de forma que as Aplicações acima não tenham acesso direto ao Banco de Dados e que as Regras de Negócio fiquem centralizadas:  :white_check_mark:
-- Crie Entidades para representar os seus Objetos do Banco de Dados. :white_check_mark:
-- Crie pelo menos uma camada de Repositório de Dados e uma de Aplicação para centralizar as validações e demais regras de negócio. Mas fique à vontade para demonstrar seu conhecimento criando mais camadas... o Uso de DDD será bem avaliado. :white_check_mark:
-- Crie Interfaces para definir os Métodos dos CRUD's. :white_check_mark:
-- Para acesso ao Banco de Dados, utilize ADO.Net. Uso do Dapper será permitido. Não utilizar Entity Framework. :white_check_mark:
-- Crie pelo menos duas Stored Procedures para realizar ações no Banco de Dados, sendo uma para Inclusão e a outra para seleção de Dados. :white_check_mark:
-- Crie uma Aplicação Web utilizando Asp.Net MVC que tenha as seguintes Views abaixo:  :white_check_mark:
-- View de Login :white_check_mark:
-- View para Visualização dos Acessos realizados :white_check_mark:
-- View para Cadastro de Usuários  :white_check_mark:
-- Crie uma View para realização de Login utilizando Bootstrap e faça uma pequena estilização utilizando CSS para dar uma aparência mais elegante para a sua Tela. :construction:
-- Crie as devidas validações para informar o Usuário quando os dados de Login não forem informados ou estiverem incorretos.  :white_check_mark:
-- A aplicação deverá gerar um Registro de Acesso na Tabela LogAcesso, incluindo o IP do Usuário sempre que o mesmo realizar o Login.  :white_check_mark:
-- Ao realizar o Login com dados válidos, o Usuário deverá ser direcionado para a View de Acessos realizados. :white_check_mark:
-- Quando o Usuário estiver logado, ele deverá visualizar um Header que será comum para todas as demais Views da Aplicação. Este Header deverá ter uma Cor de Fundo de sua escolha, onde o nome da Aplicação (escolha um nome) deverá ser exibido em destaque no lado esquerdo.  :white_check_mark:
-- No lado direito exiba o Nome do Usuário logado e um Avatar contendo a Letra inicial do Nome do Usuário. :construction:
-- Crie uma opção para o Usuário realizar o Logoff. :construction:
-- Não utilize Bootstrap, ou seja, use CSS puro para a estilização do Header, inclusive com o Avatar em forma de Círculo. :construction:
-- Adicione também ao Header os atalhos abaixo em forma de Link: :white_check_mark:
-- Acessos - para acessar a View de Acessos realizados :white_check_mark:
-- Usuários - para acessar o Cadastro de Usuários :white_check_mark:
-- Crie uma View para exibir uma Listagem de Acessos realizados. :white_check_mark:
-- A Listagem poderá ser feita como preferir e deverá exibir os dados abaixo: :white_check_mark:
-- Data/Hora Acesso :white_check_mark:
-- Nome do Usuário :white_check_mark:
-- Endereço IP :white_check_mark:
-- Crie um Filtro em forma de Combo, onde ao selecionarmos um Usuário, seja exibido somente os dados de Acesso do Usuário selecionado, ordenados por Data/Hora de Acesso. :construction:
-- Adicione uma opção para que seja possível exportar os dados Filtrados para XML, onde o usuário poderá selecionar o diretório onde deseja gerar o XML. O XML deverá conter as Tags com as mesmas informações da Listagem. :construction:
-- Logo após a Listagem, ainda na mesma View, crie um "Gráfico de Linhas" utilizando qualquer biblioteca de sua escolha para exibir a quantidade de Acessos por Hora. :white_check_mark:
-- O Gráfico deverá mostrar os Horários de 00:00 até as 23:59 com intervalos de uma Hora Ex: 01:00, 02:00, 03:00, etc com as suas respectivas quantidades de Acessos. Se o Usuário realizou o Login as 10:35, a Aplicação deverá contabilizar o acesso no Horário das 10:00. :white_check_mark:
-- Crie uma View para que seja possível cadastrar os Usuários que irão acessar a Aplicação: :white_check_mark:
-- Desenvolva o CRUD completo, ou seja, Inclusão, Listagem, Edição e Exclusão. :white_check_mark:
-- Deverá existir uma Validação para que a Senha seja válida: :white_check_mark:
-- Possuir 10 ou mais caracteres :white_check_mark:
-- Possuir ao menos 1 dígito numérico :white_check_mark:
-- Possuir ao menos 1 letra minúscula :white_check_mark:
-- Possuir ao menos 1 letra maiúscula :white_check_mark:
-- Possuir ao menos 1 dos caracteres especiais a seguir: !@#$%^&*()-+ :white_check_mark:
-- Não possuir caracteres repetidos :white_check_mark:
-- Não possuir espaços em branco :white_check_mark:
-- A Senha deverá ser criptografada antes de ser salva no Banco de Dados. :white_check_mark:
 
 ## Próximos passos
 
-- Criar uma API REST/JSON utilizando Asp.Net Web API
+- Criar API REST com Asp.Net Web API Core para separar web x api
+- Melhorar mensagem de retorno;
+- Centralizar as mensagem de erros em um resource;
+- Configurar docker compose para subir web x api;
+- Medir desempenho com grande volume de dados;
  
