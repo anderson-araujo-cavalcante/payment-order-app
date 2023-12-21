@@ -2,14 +2,12 @@
 
 > Executar fechamento do ponto e emitir a ordem de pagamento. 
 
-# Tecnologias
-
+## Tecnologias:
 - ASP.NET Core MVC (.NET 8)
 - C# 
 - .NET Core Native DI
 
-# Componentes/Serviços
-
+## Componentes/Serviços:
 - xUnit
 - Bogus 
 - FluentValidator
@@ -17,21 +15,19 @@
 - Swagger UI
 - Csv Helper 30.0.1
 
-# Arquitetura:
-
+## Arquitetura:
 - Hexagonal Architecture
 - Clean Architecture
 
-# Princípios:
-
+## Princípios:
 - Clean Code
 - DDD - Domain Driven Design (Layers and Domain Model Pattern)
 - S.O.L.I.D.
 
-# Hospedagem
+## Hospedagem
 - IIS
   
-## Como usar
+# Como usar
 
 **Pré requisitos**
 
@@ -65,22 +61,30 @@ O arquivo deve conter as seguintes colunas/tipo:
 - Almoço: Hora de registro 
 ```
 
-5. 
+5. Ao clicar em **Processar** será feito o upload dos arquivos para o servidor web;
+6. Serão realizado dois processos: ```validação de dados inconsistentes na planilha``` e ```processamento dos dados``` 
+
+• Dias trabalhados. O trabalho segue de segunda a sexta e é esperado que o funcionário trabalhe 8 
+horas por dia mais 1 hora de almoço. 
+• Valor da hora da pessoa. 
+• Os dias não trabalhados são descontados da pessoa. 
+• Horas não trabalhadas são descontadas da pessoa. 
+• Horas extras são pagas. 
+• Dias extras são pagos. 
+Após a análise de Joyce é gerado um arquivo contendo as seguintes informações: 
+• O valor pago por departamento. 
+• Os dados da pessoa. 
+• Valor pago a cada pessoa. 
+• Valor descontado de cada pessoa. 
+• Quantidade de horas extras ou horas faltantes. Quando as horas são faltantes Joyce coloca o valor 
+negativo. 
+• Quantidade de dias extras ou faltantes. Quando os dias são faltantes Joyce coloca o valor 
+negativo. 
+
+6. 
 
 
-**Web**
-1. Executar a aplicação através do visual studio;
-1. No navegador acessar a url ```https://localhost:44393/user``` e realizar o cadastro de um novo usuário:
 
-![image](https://github.com/anderson-araujo-cavalcante/access-management-app/assets/133878123/6453e2e7-36f9-4676-864b-91e5d07e1522)
-
-1. Após cadastro realizado acessar url ```https://localhost:44393/``` e fazer login com o usuário criado anteriormente:
-
-![image](https://github.com/anderson-araujo-cavalcante/access-management-app/assets/133878123/09544890-09b6-4e7e-94e6-1977576be9cc)
-
-2. Com login feito será direcionado para a View de Acessos realizados:
-
-![image](https://github.com/anderson-araujo-cavalcante/access-management-app/assets/133878123/f7335c9d-c5e8-4780-b48a-717056bf9b65)
 
 ## Tarefas Realizadas
 
