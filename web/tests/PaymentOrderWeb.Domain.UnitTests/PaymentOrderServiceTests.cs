@@ -37,7 +37,7 @@ namespace PaymentOrderWeb.Domain.UnitTests
             var discountCalendarDays = 4;
             var hourlyRate = 110.97;
             var totalValueDiscountInDepartment = hourlyRate * dailyWorkload * discountDays;
-            var data = CreateEmployeeData2(dayDiscount: discountCalendarDays, hourlyRate: hourlyRate);
+            var data = CreateEmployeeData(dayDiscount: discountCalendarDays, hourlyRate: hourlyRate);
 
             /// Act
             var result = await _service.ProcessAsync(data);
@@ -56,7 +56,7 @@ namespace PaymentOrderWeb.Domain.UnitTests
             var discountHours = 20;
             var hourlyRate = 110.97;
             var totalValueDiscountInDepartment = hourlyRate * discountHours;
-            var data = CreateEmployeeData2(outputTime: 16, hourlyRate: hourlyRate);
+            var data = CreateEmployeeData(outputTime: 16, hourlyRate: hourlyRate);
 
             /// Act
             var result = await _service.ProcessAsync(data);
@@ -75,7 +75,7 @@ namespace PaymentOrderWeb.Domain.UnitTests
             var extraHours = 20;
             var hourlyRate = 110.97;
             var totalValueExtraInDepartment = hourlyRate * extraHours;
-            var data = CreateEmployeeData2(outputTime: 18, hourlyRate: hourlyRate, onlyBusinessDays: true);
+            var data = CreateEmployeeData(outputTime: 18, hourlyRate: hourlyRate, onlyBusinessDays: true);
 
             /// Act
             var result = await _service.ProcessAsync(data);
@@ -87,29 +87,7 @@ namespace PaymentOrderWeb.Domain.UnitTests
             result.Single().Employees.Single().ExtraHours.Should().Be(extraHours);
         }
 
-        private static IDictionary<string, IEnumerable<EmployeeData>> CreateEmployeeData(int entryTime = 8, int outputTime = 18)
-        {
-            var employees = new Dictionary<string, IEnumerable<EmployeeData>>();
-            var data = Enumerable.Empty<EmployeeData>();
-            for (var i = 1; i <= 30; i++)
-            {
-                data = data.Append(new EmployeeData
-                {
-                    Code = 1,
-                    Name = "João da Silva",
-                    HourlyRate = 110.97,
-                    Date = new DateOnly(2023, 04, i),
-                    EntryTime = new TimeOnly(entryTime, 0),
-                    OutputTime = new TimeOnly(outputTime, 0),
-                    LunchTime = "12:00 - 13:00"
-                });
-            }
-            employees.Add("test-abril-2023.csv", data);
-
-            return employees;
-        }
-
-        private static IDictionary<string, IEnumerable<EmployeeData>> CreateEmployeeData2(
+        private static IDictionary<string, IEnumerable<EmployeeData>> CreateEmployeeData(
             int entryTime = 8, 
             int outputTime = 18, 
             int dayDiscount = 0,
@@ -138,7 +116,5 @@ namespace PaymentOrderWeb.Domain.UnitTests
 
             return employees;
         }
-
     }
-
 }
