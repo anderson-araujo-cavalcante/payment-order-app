@@ -2,6 +2,7 @@
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
 using PaymentOrderWeb.Application.CSVMap;
+using PaymentOrderWeb.Application.Exceptions;
 using PaymentOrderWeb.Application.Interfaces;
 using PaymentOrderWeb.Domain.Entities;
 using PaymentOrderWeb.Domain.Interfaces.Services;
@@ -65,9 +66,9 @@ namespace PaymentOrderWeb.Application.Concrets
                         list.Add(file.FileName, records.ToList());
                     }
                 }
-                catch (Exception ex) //custom
+                catch (Exception) 
                 {
-                    exceptions.Enqueue(new Exception($"Planila {file.FileName} incosistente."));
+                    exceptions.Enqueue(new InconsistentSpreadsheetException(file.FileName));
                 }
 
             }, 20, TaskScheduler.FromCurrentSynchronizationContext());
