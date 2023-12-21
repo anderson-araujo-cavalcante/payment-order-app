@@ -36,7 +36,8 @@ namespace PaymentOrderWeb.MVC.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("Exceptions", ex.Message);
+                var msg = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                ModelState.AddModelError("Exceptions", msg);
             }
 
             return View("Index", multipleFile);
