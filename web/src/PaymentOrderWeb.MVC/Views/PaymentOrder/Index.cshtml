@@ -8,7 +8,6 @@
 <hr />
 <form asp-action="UploadFiles" enctype="multipart/form-data">
     <div class="form-group">
-        @* <label asp-for="Files" class="control-label"></label> *@
         <input type="file" asp-for="Files" class="form-control" multiple />
         <span asp-validation-for="Files" class="text-danger"></span>
     </div>

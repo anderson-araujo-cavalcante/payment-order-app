@@ -25,7 +25,7 @@ namespace PaymentOrderWeb.MVC.Controllers
             {
                 var result = await _paymentOrderAppService.ProcessAsync(multipleFile.Files);
 
-                var json = System.Text.Json.JsonSerializer.Serialize(result, options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var json = JsonSerializer.Serialize(result, options: new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 byte[] bytes = Encoding.UTF8.GetBytes(json);
                 var content = new MemoryStream(bytes);
 

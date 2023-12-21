@@ -16,4 +16,8 @@
     <ProjectReference Include="..\PaymentOrderWeb.Infrasctructure\PaymentOrderWeb.Infrasctructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+
 </Project>

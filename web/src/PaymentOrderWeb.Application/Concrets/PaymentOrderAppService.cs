@@ -2,10 +2,10 @@
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
 using PaymentOrderWeb.Application.CSVMap;
-using PaymentOrderWeb.Application.Exceptions;
 using PaymentOrderWeb.Application.Interfaces;
 using PaymentOrderWeb.Domain.Entities;
 using PaymentOrderWeb.Domain.Interfaces.Services;
+using PaymentOrderWeb.Infrasctructure.Exceptions;
 using PaymentOrderWeb.Infrasctructure.Extensions;
 using System.Collections.Concurrent;
 using System.Globalization;
@@ -39,8 +39,8 @@ namespace PaymentOrderWeb.Application.Concrets
 
             if (SynchronizationContext.Current == null)
                 SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-           
-            var exceptions = new ConcurrentQueue<Exception>();            
+
+            var exceptions = new ConcurrentQueue<Exception>();
 
             await files.AsyncParallelForEach(async file =>
             {
@@ -66,7 +66,7 @@ namespace PaymentOrderWeb.Application.Concrets
                         list.Add(file.FileName, records.ToList());
                     }
                 }
-                catch (Exception) 
+                catch (Exception)
                 {
                     exceptions.Enqueue(new InconsistentSpreadsheetException(file.FileName));
                 }

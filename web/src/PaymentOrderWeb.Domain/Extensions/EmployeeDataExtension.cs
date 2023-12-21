@@ -1,6 +1,5 @@
 ﻿using PaymentOrderWeb.Domain.Entities;
 using PaymentOrderWeb.Infrasctructure.Extensions;
-using System;
 
 namespace PaymentOrderWeb.Domain.Extensions
 {
