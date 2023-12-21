@@ -1,5 +1,4 @@
-﻿using CsvHelper;
-using PaymentOrderWeb.Domain.Entities;
+﻿using PaymentOrderWeb.Domain.Entities;
 using PaymentOrderWeb.Domain.Extensions;
 using PaymentOrderWeb.Domain.Interfaces.Services;
 using PaymentOrderWeb.Infrasctructure.Enums;
@@ -7,7 +6,6 @@ using PaymentOrderWeb.Infrasctructure.Exceptions;
 using PaymentOrderWeb.Infrasctructure.Extensions;
 using PaymentOrderWeb.Infrasctructure.Helpers;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace PaymentOrderWeb.Domain.Services
 {
@@ -30,7 +28,7 @@ namespace PaymentOrderWeb.Domain.Services
                 IList<Department> departments = new List<Department>();
                 var department = new Department();
 
-                var dataFile = file.Key.Replace(".csv","").Split('-');
+                var dataFile = file.Key.Replace(".csv", "").Split('-');
                 var fileName = dataFile[0];
                 var monthReference = (int)EnumHelper.ToMonthEnum(dataFile[1]);
                 var yearReference = Convert.ToInt16(dataFile[2]);
