@@ -2,6 +2,7 @@
 using PaymentOrderWeb.Domain.Entities;
 using PaymentOrderWeb.Domain.Interfaces.Services;
 using PaymentOrderWeb.Domain.Services;
+using PaymentOrderWeb.Infrasctructure.Extensions;
 
 namespace PaymentOrderWeb.Domain.UnitTests
 {
@@ -20,11 +21,70 @@ namespace PaymentOrderWeb.Domain.UnitTests
             var data = CreateEmployeeData();
 
             /// Act
-            var result = await _service.Process1Async(data);
+            var result = await _service.ProcessAsync(data);
 
             /// Assert
             result.Should().NotBeNullOrEmpty();
             result.Single().Employees.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task DaysNotWorkedShouldBeDeducted()
+        {
+            /// Arrange
+            var dailyWorkload = 8;
+            var discountDays = 2;
+            var discountCalendarDays = 4;
+            var hourlyRate = 110.97;
+            var totalValueDiscountInDepartment = hourlyRate * dailyWorkload * discountDays;
+            var data = CreateEmployeeData2(dayDiscount: discountCalendarDays, hourlyRate: hourlyRate);
+
+            /// Act
+            var result = await _service.ProcessAsync(data);
+
+            /// Assert
+            result.Should().NotBeNullOrEmpty();
+            result.Single().Employees.Should().NotBeNullOrEmpty();
+            result.Single().TotalDiscount.Should().Be(totalValueDiscountInDepartment);
+            result.Single().Employees.Single().MissingDays.Should().Be(discountDays);
+        }
+
+        [Fact]
+        public async Task HoursNotWorkedShouldBeDeducted()
+        {
+            /// Arrange
+            var discountHours = 20;
+            var hourlyRate = 110.97;
+            var totalValueDiscountInDepartment = hourlyRate * discountHours;
+            var data = CreateEmployeeData2(outputTime: 16, hourlyRate: hourlyRate);
+
+            /// Act
+            var result = await _service.ProcessAsync(data);
+
+            /// Assert
+            result.Should().NotBeNullOrEmpty();
+            result.Single().Employees.Should().NotBeNullOrEmpty();
+            result.Single().TotalDiscount.Should().Be(totalValueDiscountInDepartment);
+            result.Single().Employees.Single().DebitHours.Should().Be(discountHours);
+        }
+
+        [Fact]
+        public async Task HoursExtrasWorkedShouldBePaid()
+        {
+            /// Arrange
+            var extraHours = 20;
+            var hourlyRate = 110.97;
+            var totalValueExtraInDepartment = hourlyRate * extraHours;
+            var data = CreateEmployeeData2(outputTime: 18, hourlyRate: hourlyRate, onlyBusinessDays: true);
+
+            /// Act
+            var result = await _service.ProcessAsync(data);
+
+            /// Assert
+            result.Should().NotBeNullOrEmpty();
+            result.Single().Employees.Should().NotBeNullOrEmpty();
+            result.Single().TotalExtra.Should().Be(totalValueExtraInDepartment);
+            result.Single().Employees.Single().ExtraHours.Should().Be(extraHours);
         }
 
         private static IDictionary<string, IEnumerable<EmployeeData>> CreateEmployeeData(int entryTime = 8, int outputTime = 18)
@@ -49,20 +109,28 @@ namespace PaymentOrderWeb.Domain.UnitTests
             return employees;
         }
 
-        private static IDictionary<string, IEnumerable<EmployeeData>> CreateEmployeeData2()
+        private static IDictionary<string, IEnumerable<EmployeeData>> CreateEmployeeData2(
+            int entryTime = 8, 
+            int outputTime = 18, 
+            int dayDiscount = 0,
+            double hourlyRate = 110.97,
+            bool onlyBusinessDays = false)
         {
             var employees = new Dictionary<string, IEnumerable<EmployeeData>>();
             var data = Enumerable.Empty<EmployeeData>();
-            for (var i = 1; i <= 30; i++)
+            for (var i = 1; i <= 30 - dayDiscount; i++)
             {
+                var date = new DateOnly(2023, 04, i);
+                if (onlyBusinessDays && !date.IsBusinessDay()) continue;
+
                 data = data.Append(new EmployeeData
                 {
                     Code = 1,
                     Name = "João da Silva",
-                    HourlyRate = 110.97,
-                    Date = new DateOnly(2023, 04, i),
-                    EntryTime = new TimeOnly(08, 0),
-                    OutputTime = new TimeOnly(18, 0),
+                    HourlyRate = hourlyRate,
+                    Date = date,
+                    EntryTime = new TimeOnly(entryTime, 0),
+                    OutputTime = new TimeOnly(outputTime, 0),
                     LunchTime = "12:00 - 13:00"
                 });
             }
@@ -70,6 +138,7 @@ namespace PaymentOrderWeb.Domain.UnitTests
 
             return employees;
         }
+
     }
 
 }

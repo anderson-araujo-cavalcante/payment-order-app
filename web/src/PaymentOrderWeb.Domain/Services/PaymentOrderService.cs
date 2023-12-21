@@ -10,7 +10,7 @@ namespace PaymentOrderWeb.Domain.Services
     {
         private const int DAILY_WORKLOAD = 8;
 
-        public async Task<IEnumerable<Department>> Process1Async(IDictionary<string, IEnumerable<EmployeeData>> employees)
+        public async Task<IEnumerable<Department>> ProcessAsync(IDictionary<string, IEnumerable<EmployeeData>> employees)
         {
             List<Department> departmentsFinal = new List<Department>();
             IDictionary<int, int> workingDaysPerMonth = new Dictionary<int, int>();
@@ -49,16 +49,19 @@ namespace PaymentOrderWeb.Domain.Services
 
                 await groupByEmployee.AsyncParallelForEach(async employeeMonth =>
                 {
+                    var data = employeeMonth.First();
                     var employee = new Employee
                     {
-                        Name = employeeMonth.First().Name,
+                        Name = data.Name,
                         Code = employeeMonth.Key,
+                        HourlyRate = employeeMonth.First().HourlyRate,
                         TotalReceivable = employeeMonth.Sum(x => x.TotalValueDay()),
                         ExtraHours = employeeMonth.TimeSpanSum(x => x.TotalTimeExtraDay()).TotalHours,
                         DebitHours = employeeMonth.TimeSpanSum(x => x.TotalTimeDiscountDay()).TotalHours,
                         MissingDays = month - employeeMonth.Count(x => x.Date.IsBusinessDay()),
                         ExtraDays = employeeMonth.Count(x => !x.Date.IsBusinessDay()),
                         WorkedDays = employeeMonth.Count()
+                        //HourlyRate = employeeMonth.First().HourlyRate
                     };
 
                     department.Employees.Add(employee);

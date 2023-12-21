@@ -78,7 +78,7 @@ namespace PaymentOrderWeb.Application.Concrets
                 throw new AggregateException(exceptions);
             }
 
-            return await _paymentOrderService.Process1Async(list);
+            return await _paymentOrderService.ProcessAsync(list);
         }
     }
 }

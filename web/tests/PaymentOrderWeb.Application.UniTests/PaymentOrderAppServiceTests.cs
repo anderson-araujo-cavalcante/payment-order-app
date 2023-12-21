@@ -73,7 +73,7 @@ namespace PaymentOrderWeb.Application.UnitTests
             await _appService.ProcessAsync(new List<IFormFile>() { file });
 
             /// Assert
-            _service.Verify(x => x.Process1Async(It.IsAny<IDictionary<string, IEnumerable<EmployeeData>>>()), Times.Once);
+            _service.Verify(x => x.ProcessAsync(It.IsAny<IDictionary<string, IEnumerable<EmployeeData>>>()), Times.Once);
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace PaymentOrderWeb.Application.UnitTests
             await _appService.ProcessAsync(files);
 
             /// Assert
-            _service.Verify(x => x.Process1Async(It.IsAny<IDictionary<string, IEnumerable<EmployeeData>>>()), Times.Exactly(1));
+            _service.Verify(x => x.ProcessAsync(It.IsAny<IDictionary<string, IEnumerable<EmployeeData>>>()), Times.Exactly(1));
         }
 
         private static IFormFile CreateFormFile(string content, string departmentName = "test")
