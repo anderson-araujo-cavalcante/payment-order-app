@@ -24,5 +24,7 @@ namespace PaymentOrderWeb.Domain.Entities
 
         [JsonPropertyName("Funcionarios")]
         public ICollection<Employee> Employees { get; set; }
+
+        public Department() => Employees = new List<Employee>();
     }
 }

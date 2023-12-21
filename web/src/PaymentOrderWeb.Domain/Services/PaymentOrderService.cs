@@ -8,10 +8,7 @@ namespace PaymentOrderWeb.Domain.Services
 {
     public class PaymentOrderService : IPaymentOrderService
     {
-        public async Task Process(IEnumerable<EmployeeData> employees)
-        {
-            Parallel.ForEach(employees, employee => { });
-        }
+        private const int DAILY_WORKLOAD = 8;
 
         public async Task<IEnumerable<Department>> Process1Async(IDictionary<string, IEnumerable<EmployeeData>> employees)
         {
@@ -26,30 +23,25 @@ namespace PaymentOrderWeb.Domain.Services
             await employees.AsyncParallelForEach(async file =>
             {
                 IList<Department> departments = new List<Department>();
-                var department = new Department
-                {
-                    Employees = new List<Employee>()
-                };
+                var department = new Department();
+
                 var fileName = file.Key[..file.Key.IndexOf('-')];
-                department.Name = fileName;
-                department.ReferenceMonth = file.Value.First().Date.Month.ToString();
-                department.ReferenceYear = file.Value.First().Date.Year.ToString();
+                var monthReference = file.Value.First().Date.Month;
+                var yearReference = file.Value.First().Date.Year;
 
                 var month = 0;
 
-                if (workingDaysPerMonth.TryGetValue(4, out var value))
+                if (workingDaysPerMonth.TryGetValue(monthReference, out var value))
                 {
                     month = value;
                 }
                 else
                 {
-                    //pegar dias uteis
-                    var diasUteis = 21;
-                    workingDaysPerMonth.Add(4, diasUteis);
-                    month = diasUteis;
+                    var totalBusinessDays = new DateTime(yearReference, monthReference, 1).TotalBusinessDaysInMonth();
+                    workingDaysPerMonth.Add(monthReference, totalBusinessDays);
+                    month = totalBusinessDays;
                 }
 
-                //agrupar por pessoa
                 var groupByEmployee = file.Value.GroupBy(x => x.Code);
 
                 if (SynchronizationContext.Current == null)
@@ -61,11 +53,11 @@ namespace PaymentOrderWeb.Domain.Services
                     {
                         Name = employeeMonth.First().Name,
                         Code = employeeMonth.Key,
-                        TotalReceivable = employeeMonth.Sum(x => x.TotalDay()),
-                        ExtraHours = employeeMonth.TimeSpanSum(x => x.TotalExtraDay()).TotalHours,
-                        DebitHours = employeeMonth.TimeSpanSum(x => x.TotalDiscountDay()).TotalHours,
-                        MissingDays = month - employeeMonth.Count(x => x.IsBusinessDay()),
-                        ExtraDays = employeeMonth.Count(x => !x.IsBusinessDay()),
+                        TotalReceivable = employeeMonth.Sum(x => x.TotalValueDay()),
+                        ExtraHours = employeeMonth.TimeSpanSum(x => x.TotalTimeExtraDay()).TotalHours,
+                        DebitHours = employeeMonth.TimeSpanSum(x => x.TotalTimeDiscountDay()).TotalHours,
+                        MissingDays = month - employeeMonth.Count(x => x.Date.IsBusinessDay()),
+                        ExtraDays = employeeMonth.Count(x => !x.Date.IsBusinessDay()),
                         WorkedDays = employeeMonth.Count()
                     };
 
@@ -73,8 +65,11 @@ namespace PaymentOrderWeb.Domain.Services
 
                 }, 20, TaskScheduler.FromCurrentSynchronizationContext());
 
-                department.TotalDiscount = department.Employees.Sum(x => (x.DebitHours + (x.MissingDays * 8)) * x.HourlyRate);
-                department.TotalExtra = department.Employees.Sum(x => (x.ExtraHours + (x.ExtraDays * 8)) * x.HourlyRate);
+                department.Name = fileName;
+                department.ReferenceMonth = monthReference.ToString();
+                department.ReferenceYear = yearReference.ToString();
+                department.TotalDiscount = department.Employees.Sum(x => (x.DebitHours + (x.MissingDays * DAILY_WORKLOAD)) * x.HourlyRate);
+                department.TotalExtra = department.Employees.Sum(x => (x.ExtraHours + (x.ExtraDays * DAILY_WORKLOAD)) * x.HourlyRate);
                 department.TotalToPay = department.Employees.Sum(x => x.TotalReceivable);
 
                 departmentsFinal.Add(department);

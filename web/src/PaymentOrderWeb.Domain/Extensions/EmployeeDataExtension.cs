@@ -1,43 +1,41 @@
 ﻿using PaymentOrderWeb.Domain.Entities;
+using PaymentOrderWeb.Infrasctructure.Extensions;
+using System;
 
 namespace PaymentOrderWeb.Domain.Extensions
 {
     public static class EmployeeDataExtension
     {
-        public static TimeSpan TotalLunchHour(this EmployeeData source)
+        public static TimeSpan TotalTimeLunchHour(this EmployeeData source)
         {
-            var teste = source.LunchTime.Split(" - ");
-            var fa = teste[0].Split(":");
+            var hours = source.LunchTime.Split(" - ");
+            var outForLunch = FormatHour(hours[0].Split(":"));
+            var returnFromLunch = FormatHour(hours[1].Split(":"));
+            return returnFromLunch - outForLunch;
+        }
 
-            var tsts = Convert.ToInt16(fa[0]);
-            var tsts1 = Convert.ToInt16(fa[1]);
-            var time = new TimeSpan(tsts, tsts1, 0);
-
-            var fa3 = teste[1].Split(":");
-            var tsts2 = Convert.ToInt16(fa3[0]);
-            var tsts3 = Convert.ToInt16(fa3[1]);
-            var time2 = new TimeSpan(tsts2, tsts3, 0);
-
-            var total = time2 - time;
-
-            return total;
+        private static TimeSpan FormatHour(string[] hours)
+        {
+            var hour = Convert.ToInt16(hours[0]);
+            var minute = Convert.ToInt16(hours[1]);
+            return new TimeSpan(hour, minute, 0);
         }
 
         public static TimeSpan TotalHoursWorked(this EmployeeData source)
         {
             var worked = source.OutputTime - source.EntryTime;
-            return worked - source.TotalLunchHour();
+            return worked - source.TotalTimeLunchHour();
         }
 
-        public static double TotalDay(this EmployeeData source)
+        public static double TotalValueDay(this EmployeeData source)
         {
             return source.TotalHoursWorked().TotalHours * source.HourlyRate;
         }
 
-        public static TimeSpan TotalDiscountDay(this EmployeeData source)
+        public static TimeSpan TotalTimeDiscountDay(this EmployeeData source)
         {
             var total = TimeSpan.Zero;
-            if (source.IsBusinessDay())
+            if (source.Date.IsBusinessDay())
             {
                 var dailyWorkload = TimeSpan.FromHours(8);
                 if (source.TotalHoursWorked() < dailyWorkload) total = dailyWorkload - source.TotalHoursWorked();
@@ -45,20 +43,15 @@ namespace PaymentOrderWeb.Domain.Extensions
             return total;
         }
 
-        public static TimeSpan TotalExtraDay(this EmployeeData source)
+        public static TimeSpan TotalTimeExtraDay(this EmployeeData source)
         {
             var total = TimeSpan.Zero;
-            if (source.IsBusinessDay())
+            if (source.Date.IsBusinessDay())
             {
                 var dailyWorkload = TimeSpan.FromHours(8);
                 if (source.TotalHoursWorked() > dailyWorkload) total = source.TotalHoursWorked() - dailyWorkload;
             }
             return total;
-        }
-
-        public static bool IsBusinessDay(this EmployeeData source)
-        {
-            return !(source.Date.DayOfWeek == DayOfWeek.Saturday || source.Date.DayOfWeek == DayOfWeek.Sunday);
         }
     }
 }
