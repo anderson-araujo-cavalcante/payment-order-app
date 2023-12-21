@@ -2,7 +2,7 @@
 
 namespace PaymentOrderWeb.Infrasctructure.Extensions
 {
-    public static class AsyncParallel
+    public static class EnumerableExtensions
     {
         public static Task AsyncParallelForEach<T>(this IEnumerable<T> source, Func<T, Task> body, int maxDegreeOfParallelism = DataflowBlockOptions.Unbounded, TaskScheduler scheduler = null)
         {
@@ -20,6 +20,11 @@ namespace PaymentOrderWeb.Infrasctructure.Extensions
 
             block.Complete();
             return block.Completion;
+        }
+
+        public static TimeSpan TimeSpanSum<TSource>(this IEnumerable<TSource> source, Func<TSource, TimeSpan> func)
+        {
+            return new TimeSpan(source.Sum(item => func(item).Ticks));
         }
     }
 }

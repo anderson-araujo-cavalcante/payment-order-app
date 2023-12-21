@@ -8,12 +8,17 @@
 <hr />
 <form asp-action="UploadFiles" enctype="multipart/form-data">
     <div class="form-group">
-        <label asp-for="Files" class="control-label"></label>
+        @* <label asp-for="Files" class="control-label"></label> *@
         <input type="file" asp-for="Files" class="form-control" multiple />
         <span asp-validation-for="Files" class="text-danger"></span>
     </div>
     <br />
     <div class="form-group">
         <input type="submit" value="Processar" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Limpar</a>
     </div>
 </form>
+<br />
+<div class="form-group">
+    @Html.ValidationMessage("Exceptions", new { @class = "text-danger" })
+</div>

@@ -21,7 +21,7 @@ namespace PaymentOrderWeb.Application.Concrets
             _paymentOrderService = paymentOrderService ?? throw new ArgumentNullException(nameof(paymentOrderService));
         }
 
-        public async Task ProcessAsync(IEnumerable<IFormFile> files)
+        public async Task<IEnumerable<Department>> ProcessAsync(IEnumerable<IFormFile> files)
         {
             if (files is null) throw new ArgumentNullException(nameof(files));
 
@@ -38,7 +38,8 @@ namespace PaymentOrderWeb.Application.Concrets
 
             if (SynchronizationContext.Current == null)
                 SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-            var exceptions = new ConcurrentQueue<Exception>();
+           
+            var exceptions = new ConcurrentQueue<Exception>();            
 
             await files.AsyncParallelForEach(async file =>
             {
@@ -76,7 +77,7 @@ namespace PaymentOrderWeb.Application.Concrets
                 throw new AggregateException(exceptions);
             }
 
-            _paymentOrderService.Process1Async(list);
+            return await _paymentOrderService.Process1Async(list);
         }
     }
 }

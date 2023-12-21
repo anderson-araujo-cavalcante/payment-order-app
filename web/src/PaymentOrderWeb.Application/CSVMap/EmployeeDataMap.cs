@@ -13,7 +13,7 @@ namespace PaymentOrderWeb.Application.CSVMap
 
             Map(m => m.Code).Index(0).Name("Código", "Codigo");
             Map(m => m.Name).Index(1).Name("Nome");
-            Map(m => m.HourlyRate).Index(2).Name("Valor hora").Convert(row => Math.Round(Convert.ToDecimal(row.Row.GetField<string>(2).Replace("R$ ", "")), 2));
+            Map(m => m.HourlyRate).Index(2).Name("Valor hora").Convert(row => Math.Round(Convert.ToDouble(row.Row.GetField<string>(2).Replace("R$ ", "")), 2));
             Map(m => m.Date).TypeConverterOption.Format(format).TypeConverterOption.CultureInfo(msMY).Index(3);
             Map(m => m.EntryTime).Index(4).Name("Entrada");
             Map(m => m.OutputTime).Index(5).Name("Saída", "Saida");

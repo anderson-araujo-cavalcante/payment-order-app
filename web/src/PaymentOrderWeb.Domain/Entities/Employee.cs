@@ -1,14 +1,34 @@
-﻿namespace PaymentOrderWeb.Domain.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace PaymentOrderWeb.Domain.Entities
 {
-    public class Employee
+    public struct Employee
     {
+        [JsonPropertyName("Codigo")]
         public int Code { get; set; }
+
+        [JsonPropertyName("Nome")]
         public string Name { get; set; }
-        public string TotalReceivable { get; set; }
-        public string ExtraHours { get; set; }
-        public string DebitHours { get; set; }
-        public string MissingDays { get; set; }
-        public string ExtraDays { get; set; }
-        public string WorkedDays { get; set; }
+
+        [JsonPropertyName("TotalReceber")]
+        public double TotalReceivable { get; set; }
+
+        [JsonPropertyName("HorasExtras")]
+        public double ExtraHours { get; set; }
+
+        [JsonPropertyName("HorasDebito")]
+        public double DebitHours { get; set; }
+
+        [JsonPropertyName("DiasFalta")]
+        public int MissingDays { get; set; }
+
+        [JsonPropertyName("DiasExtras")]
+        public int ExtraDays { get; set; }
+
+        [JsonPropertyName("DiasTrabalhados")]
+        public int WorkedDays { get; set; }
+
+        [JsonIgnore]
+        public double HourlyRate { get; set; }
     }   
 }
